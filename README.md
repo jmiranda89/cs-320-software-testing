@@ -1,5 +1,12 @@
 # CS-320 Project One: Software Testing
 
+[![CI](https://github.com/jmiranda89/cs-320-software-testing/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/jmiranda89/cs-320-software-testing/actions/workflows/ci.yml)
+[![Java 11](https://img.shields.io/badge/Java-11-007396?logo=openjdk&logoColor=white)](https://adoptium.net/temurin/releases/?version=11)
+[![JUnit 5](https://img.shields.io/badge/JUnit-5-25A162?logo=junit5&logoColor=white)](https://docs.junit.org/5.14.0/)
+[![JaCoCo coverage snapshot: 100% lines and branches](https://img.shields.io/badge/JaCoCo%20snapshot-100%25%20lines%20%26%20branches-brightgreen)](#test-results-and-coverage)
+
+The CI badge reflects GitHub Actions status for pushes to `main`; a passing status requires an actual GitHub-hosted run. The Java and JUnit badges identify the toolchain. The JaCoCo badge is a **static, locally verified coverage snapshot from October 19, 2026**, with 100% line and branch coverage. It does not update with CI. See [Test Results and Coverage](#test-results-and-coverage) for the measured results.
+
 ## Project Overview
 
 This project was completed for Southern New Hampshire University's **CS-320: Software Testing, Automation, and Quality Assurance** course. Project One focuses on testing three small Java services against their requirements: Contact, Task, and Appointment.
@@ -133,6 +140,19 @@ mvn clean verify
 ```
 
 Surefire discovers the six existing `*Test` classes using the JUnit Platform and fails the build if no tests are found. JaCoCo collects coverage during tests; its report runs in the `verify` phase. Open `target/site/jacoco/index.html` in a browser after verification. Machine-readable coverage is in `target/site/jacoco/jacoco.xml`, and individual test results are in `target/surefire-reports/`.
+
+## Continuous Integration and Dependency Updates
+
+The [CI workflow](.github/workflows/ci.yml) runs `mvn --batch-mode --no-transfer-progress clean verify` on pushes to `main` and on pull requests. It uses Eclipse Temurin JDK 11 on Ubuntu, caches Maven dependencies, and has a 20-minute job timeout.
+
+Completed runs, including runs with failed tests, upload available reports as artifacts retained for 14 days:
+
+- **`jacoco-coverage`** contains `target/site/jacoco/`, including the HTML report at `index.html` and XML coverage data.
+- **`junit-test-reports`** contains `target/surefire-reports/`, including JUnit XML and text test results.
+
+When a build fails after collecting coverage data, a separate step attempts to generate the JaCoCo report before uploading the available reports. The original build failure still fails CI. Failures before tests start may leave no reports to upload; cancelled or timed-out jobs may not upload artifacts. Download reports from the run's summary on the repository's [Actions tab](https://github.com/jmiranda89/cs-320-software-testing/actions/workflows/ci.yml).
+
+[Dependabot](.github/dependabot.yml) checks Maven dependencies and GitHub Actions monthly, with at most five open version-update pull requests per ecosystem.
 
 ## Test Results and Coverage
 
