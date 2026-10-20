@@ -5,7 +5,7 @@
 [![JUnit 5](https://img.shields.io/badge/JUnit-5-25A162?logo=junit5&logoColor=white)](https://docs.junit.org/5.14.0/)
 [![JaCoCo coverage snapshot: 100% lines and branches](https://img.shields.io/badge/JaCoCo%20snapshot-100%25%20lines%20%26%20branches-brightgreen)](#test-results-and-coverage)
 
-The CI badge reflects GitHub Actions status for pushes to `main`; a passing status requires an actual GitHub-hosted run. The Java and JUnit badges identify the toolchain. The JaCoCo badge is a **static, locally verified coverage snapshot from October 19, 2026**, with 100% line and branch coverage. It does not update with CI. See [Test Results and Coverage](#test-results-and-coverage) for the measured results.
+The CI badge reflects GitHub Actions status for pushes to `main`; a passing status requires an actual GitHub-hosted run. The Java and JUnit badges identify the toolchain. The JaCoCo badge is a **static, locally verified coverage snapshot from October 19, 2026**, with 100% line and branch coverage. See [Test Results and Coverage](#test-results-and-coverage) for the measured results.
 
 ## Project Overview
 
@@ -208,15 +208,21 @@ This project helped me connect software requirements to repeatable checks. Testi
 
 ### How can I ensure that my code, program, or software is functional and secure?
 
-I use the written requirements to define expected behavior, then write JUnit tests for valid and invalid inputs. Boundary value analysis checks field limits, and equivalence partitioning helps me select representative invalid phone numbers. I check null values, duplicate IDs, and invalid field lengths, including whether rejected operations preserve existing data. The Appointment date tests showed me why validation needs to protect object state: accepting a valid date during construction would not be enough if outside code could later change the stored `Date`. Testing changes through both the original reference and the getter checks that protection. I use JaCoCo to look for untested paths, but 100% coverage does not guarantee defect-free or secure software. These tests verify requirements and input validation; they do not provide comprehensive security testing.
+I used the written requirements to determine the expected behavior of the code, then wrote JUnit tests for a number of test cases, including valid and invalid inputs. For boundary value analysis, I tested field lengths at their limits as well as values just outside those limits. For the phone number field, I used equivalence partitioning to select different invalid inputs, including null values, incorrect lengths, and alphabetic characters. I also tested duplicate IDs and whether rejected operations left the existing data unchanged.
+
+The Appointment date tests showed me that validation must also protect the state of an object. Accepting a valid date during construction does not mean that outside code cannot change the stored Date. Therefore, I tested changes through both the original Date object and the Date returned by the getter. I also used JaCoCo to identify untested paths in the code. However, 100% coverage does not necessarily mean that the resulting code is defect-free or secure.
 
 ### How do I interpret user needs and incorporate them into a program?
 
-I start with the software requirements so that my assumptions do not become the expected behavior. I break each requirement into a validation rule or service operation, then identify the expected result and failure conditions. For Contact, the phone requirement means accepting exactly 10 digits and rejecting null, alphabetic, or incorrectly sized values. A unique ID requirement also means checking that adding a duplicate does not replace the existing contact. I consider how another component could use the public methods, including lookups and updates when an ID is missing. Turning these requirements into testable behaviors gives me a way to check whether the implementation meets the stated needs.
+First, I translated the software requirements into validation rules for the fields and into service operations. Then, for each of these, I identified the expected results and failure cases. For Contact, for example, the phone number field has a requirement that it must accept exactly 10 digits. So null values, alphabetic characters, or values that are not exactly 10 digits would be rejected.
+
+Another requirement for Contact was that each contact must have a unique ID. So adding a contact with a duplicate ID would result in the new contact being rejected rather than replacing the existing contact. I also tried to imagine how another component would use the public methods of a class. For example, looking up a contact by ID or attempting to update a contact that does not exist. Thinking through these scenarios helped me turn the requirements into test cases instead of relying on assumptions.
 
 ### How do I approach designing software?
 
-I approach design by understanding the requirements and deciding which responsibilities belong in each class. In this project, the models validate their fields, while the services manage collections and operations by ID. I define the validation rules and think about successful and unsuccessful operations, including what data should remain unchanged after a failure. Keeping those responsibilities separate makes the code easier for me to test and maintain without adding unnecessary complexity. I use automated tests to verify the implementation and check existing behavior after changes. When requirements change, I need to update the tests as well. Maintaining that discipline helps me catch regressions and avoid technical debt from shortcuts in validation or testing.
+When designing software, I first consider the requirements at hand and then decide which responsibilities a class should have. So the models can validate their fields, and the services are responsible for managing collections of objects and the operations performed on them by ID. I try to think of the possible successful and unsuccessful actions, and what data should remain unchanged in case of failure.
+
+In that way, the code can be tested and maintained without too much overhead. I use automated tests to check new functionality as well as changes to existing code. These automated tests also have to be updated when the requirements change. By sticking to this way of working, I can catch regressions and avoid technical debt by not taking shortcuts with validation and testing.
 
 ## Technologies
 
