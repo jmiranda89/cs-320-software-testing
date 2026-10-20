@@ -13,6 +13,19 @@ This project was completed for Southern New Hampshire University's **CS-320: Sof
 
 Each service stores objects in memory and supports operations identified below. The JUnit tests check valid operations, rejected inputs, field limits, and the state of objects after changes. This portfolio version preserves the original implementation and test files while adding a repeatable Maven build and JaCoCo coverage reporting.
 
+## Portfolio Artifacts
+
+**Project One:** Java implementation, input validation, and JUnit unit testing for the Contact Service.
+
+- [Contact.java](src/Contact.java): Contact model and field validation.
+- [ContactService.java](src/ContactService.java): Contact storage and operations by ID.
+- [ContactTest.java](test/ContactTest.java): Unit tests for Contact validation and field updates.
+- [ContactServiceTest.java](test/ContactServiceTest.java): Unit tests for service operations, duplicate IDs, and state after rejected operations.
+
+**Project Two:** [Summary and reflections report](docs/Jonathan_Miranda_Project_Two.docx), reviewing testing approaches, requirements alignment, test effectiveness, coverage, and lessons learned.
+
+The Task and Appointment implementations and tests remain included as additional Project One work.
+
 ## Services Implemented
 
 ### Contact Service
@@ -80,6 +93,8 @@ cs-320-software-testing/
 |-- .gitignore
 |-- pom.xml
 |-- README.md
+|-- docs/
+|   `-- Jonathan_Miranda_Project_Two.docx
 |-- src/
 |   |-- Appointment.java
 |   |-- AppointmentService.java
@@ -188,6 +203,20 @@ Every class exceeds the course's 80% expectation in all three reported metrics. 
 ## What I Learned
 
 This project helped me connect software requirements to repeatable checks. Testing values at and just beyond a limit makes the validation rules concrete, while null and invalid inputs show whether the code rejects bad data consistently. Checking the state after a rejected update is also important: an exception alone does not show that the original data was preserved. Automated tests give me a consistent way to check these behaviors again when making future changes.
+
+## Module Eight Portfolio Reflection
+
+### How can I ensure that my code, program, or software is functional and secure?
+
+I use the written requirements to define expected behavior, then write JUnit tests for valid and invalid inputs. Boundary value analysis checks field limits, and equivalence partitioning helps me select representative invalid phone numbers. I check null values, duplicate IDs, and invalid field lengths, including whether rejected operations preserve existing data. The Appointment date tests showed me why validation needs to protect object state: accepting a valid date during construction would not be enough if outside code could later change the stored `Date`. Testing changes through both the original reference and the getter checks that protection. I use JaCoCo to look for untested paths, but 100% coverage does not guarantee defect-free or secure software. These tests verify requirements and input validation; they do not provide comprehensive security testing.
+
+### How do I interpret user needs and incorporate them into a program?
+
+I start with the software requirements so that my assumptions do not become the expected behavior. I break each requirement into a validation rule or service operation, then identify the expected result and failure conditions. For Contact, the phone requirement means accepting exactly 10 digits and rejecting null, alphabetic, or incorrectly sized values. A unique ID requirement also means checking that adding a duplicate does not replace the existing contact. I consider how another component could use the public methods, including lookups and updates when an ID is missing. Turning these requirements into testable behaviors gives me a way to check whether the implementation meets the stated needs.
+
+### How do I approach designing software?
+
+I approach design by understanding the requirements and deciding which responsibilities belong in each class. In this project, the models validate their fields, while the services manage collections and operations by ID. I define the validation rules and think about successful and unsuccessful operations, including what data should remain unchanged after a failure. Keeping those responsibilities separate makes the code easier for me to test and maintain without adding unnecessary complexity. I use automated tests to verify the implementation and check existing behavior after changes. When requirements change, I need to update the tests as well. Maintaining that discipline helps me catch regressions and avoid technical debt from shortcuts in validation or testing.
 
 ## Technologies
 
