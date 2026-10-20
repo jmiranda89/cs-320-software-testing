@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Java 11 tests and coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Eclipse Temurin JDK 11
+        uses: actions/setup-java@v6.1.0
+        with:
+          distribution: temurin
+          java-version: '11'
+          cache: maven
+          cache-dependency-path: pom.xml
+
+      - name: Build, test, and generate coverage
+        id: verify
+        timeout-minutes: 10
+        run: mvn --batch-mode --no-transfer-progress clean verify
+
+      # A failed test stops Maven before the report bound to the verify phase.
+      - name: Generate available coverage after a failed build
+        if: ${{ failure() && steps.verify.outcome == 'failure' && hashFiles('target/jacoco.exec') != '' }}
+        timeout-minutes: 2
+        run: mvn --batch-mode --no-transfer-progress jacoco:report
+
+      - name: Upload JaCoCo coverage report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7.0.2
+        timeout-minutes: 2
+        with:
+          name: jacoco-coverage
+          path: target/site/jacoco/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload JUnit test reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7.0.2
+        timeout-minutes: 2
+        with:
+          name: junit-test-reports
+          path: target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 14
